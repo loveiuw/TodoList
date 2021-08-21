@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 父组件 -->
+    <div id="app">
+        <div class="todolist">
+            <div id="title">
+            <h2>' TodoList '</h2>
+         </div>
+        <div id="content">
+            <label for="">
+            <input type="text" v-model="newdata">
+            <button @click="updata">提交</button>
+        </label>
+        <cpn1 :c1event="unf" @itemclick="cpn1click"></cpn1>
+        <cpn2 :c2event="fed" @itemclick="cpn2click"></cpn2>
+        </div> 
+        </div>
+    </div>
+    <!-- 未完成子组件模板 -->
+    <template id="cpn1">
+        <div>
+            <h2>未完成事情</h2>  
+            <div v-for="(item,index) in c1event">
+                    <button @click="delunf(index)">删除</button>
+                    <button @click="updataunf(item,index)">未完成</button>
+                    <span>{{item.thing}}</span>    
+            </div>
+        </div>  
+    </template>
+    <!-- 完成子组件模板 -->
+    <template id="cpn2">
+        <div>
+            <h2>已完成的事情</h2>
+            <div v-for="(item,index) in c2event">
+                <button @click="delunf(index)">删除</button>
+                <button @click="updatafed(item,index)">未完成</button>
+                <span>{{item.thing}}</span>    
+            </div> 
+        </div>  
+    </template>
+    <script src="/vue.js"></script>
+    <script>
+        // 未完成
+        const cpn1 = {
+            template: '#cpn1',
+            props:{
+                c1event:{
+                    type:Array,
+                    default:'未完成事件'
+                }
+            },
+            methods:{
+                delunf(index){
+                    this.c1event.splice(index,1);
+                },
+                updataunf(item,index){
+                    this.$emit('itemclick',item,index);
+                }
+            }
+        }
+        //已完成
+        const cpn2 = {
+            template: '#cpn2',
+            props:{
+                c2event:{
+                    type:Array,
+                    default:'已完成事件'
+                }
+            },
+            methods:{
+                delunf(index){
+                    this.c2event.splice(index,1);
+                },
+                updatafed(item,index){
+                    this.$emit('itemclick',item,index);
+                }
+            }
+        }
+        const app = new Vue({
+            el: '#app',
+            data:{
+                newdata:'',
+                eventlist: [  
+                    {state:false,thing:'吃烤肉'},
+                    {state:true,thing:'睡觉'},    
+                    {state:false,thing:'狠狠洗把脸'},  
+                    {state:true,thing:'跑三公里'}
+                ] ,
+                unf:[
+                ],
+                fed:[
+                ] 
+            },
+            methods:{
+                cpn1click(item,index){
+                    //console.log(item)
+                    this.unf.splice(index,1);
+                    this.fed.unshift(item);
+                },
+                cpn2click(item,index){
+                    this.fed.splice(index,1);
+                    this.unf.push(item);
+                },
+                updata(){
+                    let newevent = {state:false,thing:this.newdata};
+                    this.unf.unshift(newevent);
+                },
+               
+            }, 
+            beforeCreate(){
+                    alert('这是创建实例后')
+            },
+            components:{
+                cpn1,
+                cpn2
+            },
+            //created:在模板渲染成html前调用，即通常初始化某些属性值，然后再渲染成视图。
+            //mounted:在模板渲染成html后调用，通常是初始化页面完成后，再对html的dom节点进行一些需要的操作
+            created:function(){
+                 let event = this.eventlist;
+                for(let i=0; i < event.length; i++){
+                    if(event[i].state){
+                        //console.log('初始化页面')
+                        this.unf.push(event[i]);
+                        //console.log(event[i].thing)
+                    }else{
+                        this.fed.push(event[i]);
+                    } 
+                } 
+                //数组sort()排序字符串
+                    this.unf.sort(function(a,b){
+                        return b.length - a.length
+                    })
+                    this.def.sort(function(a,b){
+                        return b.length - a.length
+                    })
+            }
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+#title{
+    background-color:pink;
+    width: 300px;
+    height: 40px;
+    color: white;
+    text-align: center;
+}
+#content{
+    background-color: paleturquoise;
+    width: 300px;
+}
